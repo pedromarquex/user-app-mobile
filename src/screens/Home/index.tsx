@@ -1,10 +1,10 @@
 import React from "react";
 import { Icon, ListItem, MenuItem, OverflowMenu } from "@ui-kitten/components";
-
 import { useNavigation } from "@react-navigation/native";
+
 import * as S from "./styles";
 
-const data = new Array(6).fill({
+const data = new Array(22).fill({
   title: "User",
   description: "User description",
 });
@@ -50,7 +50,15 @@ function Home(): JSX.Element {
     />
   );
 
-  return <S.ListContainer data={data} renderItem={renderItem} />;
+  return (
+    <>
+      <S.ListContainer data={data} renderItem={renderItem} />
+      <S.PaginationContainer>
+        <S.PreviousPageButton name="chevron-left" />
+        <S.NextPageButton name="chevron-right" />
+      </S.PaginationContainer>
+    </>
+  );
 }
 
 export { Home };
