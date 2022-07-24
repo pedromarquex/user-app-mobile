@@ -1,8 +1,7 @@
 import React from "react";
-import { Icon, Spinner } from "@ui-kitten/components";
+import { Icon } from "@ui-kitten/components";
 import { useNavigation } from "@react-navigation/native";
 
-import { View } from "react-native";
 import * as S from "./styles";
 
 // {

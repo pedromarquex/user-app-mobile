@@ -6,6 +6,8 @@ declare global {
     interface RootParamList {
       Home: undefined;
       NewUser: undefined;
+      ShowUser: undefined;
+      EditUser: undefined;
     }
   }
 }

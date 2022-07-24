@@ -1,14 +1,7 @@
 import React from "react";
-import {
-  Button,
-  Icon,
-  ListItem,
-  MenuItem,
-  OverflowMenu,
-} from "@ui-kitten/components";
+import { Icon, ListItem, MenuItem, OverflowMenu } from "@ui-kitten/components";
 
 import { useNavigation } from "@react-navigation/native";
-import { View } from "react-native";
 import * as S from "./styles";
 
 const data = new Array(6).fill({
@@ -53,6 +46,7 @@ function Home(): JSX.Element {
       title={`${item.title} ${index + 1}`}
       description={`user${index + 1}@mail.com`}
       accessoryRight={<Icon name="chevron-right" />}
+      onPress={() => navigation.navigate("ShowUser")}
     />
   );
 
