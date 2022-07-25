@@ -27,20 +27,20 @@ interface UsersListResponse {
 function Home(): JSX.Element {
   const navigation = useNavigation();
 
-  const [usersListing, setUsersListing] = React.useState<UsersListResponse>([]);
+  const [usersListing, setUsersListing] = React.useState<UsersListResponse>(
+    {} as UsersListResponse
+  );
   const [visible, setVisible] = React.useState(false);
   const [page, setPage] = React.useState(1);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    async function loadUsers() {
-      setLoading(true);
-      const response = await api.get(`/users?page=${page}`);
+    setLoading(true);
+    api.get(`/users?page=${page}`).then((response) => {
       setUsersListing(response.data);
       setPage(response.data.page);
       setLoading(false);
-    }
-    loadUsers();
+    });
   }, [page]);
 
   React.useLayoutEffect(() => {
@@ -94,12 +94,14 @@ function Home(): JSX.Element {
             {usersListing.users?.map((user) => (
               <S.UserCard
                 key={user.id}
-                onPress={() => navigation.navigate("ShowUser")}
+                onPress={() =>
+                  navigation.navigate("ShowUser", { userId: user.id })
+                }
               >
                 {user.avatar ? (
                   <Image
                     source={{
-                      uri: user.avatar_url.replace("localhost", "10.0.2.2"),
+                      uri: user?.avatar_url?.replace("localhost", "10.0.2.2"),
                     }}
                     style={{
                       width: "100%",
@@ -120,7 +122,9 @@ function Home(): JSX.Element {
                 <Text category="h6">{`${user.first_name} ${user.last_name}`}</Text>
                 <Text>{user.email}</Text>
                 <Button
-                  onPress={() => navigation.navigate("ShowUser")}
+                  onPress={() =>
+                    navigation.navigate("ShowUser", { userId: user.id })
+                  }
                   appearance="ghost"
                   status="basic"
                   accessoryRight={<S.UserDetailIcon name="chevron-right" />}
