@@ -1,8 +1,17 @@
 import React from "react";
-import { Icon, ListItem, MenuItem, OverflowMenu } from "@ui-kitten/components";
+import {
+  Card,
+  Icon,
+  MenuItem,
+  OverflowMenu,
+  Text,
+} from "@ui-kitten/components";
 import { useNavigation } from "@react-navigation/native";
 
+import { Image } from "react-native";
 import * as S from "./styles";
+import { ScrollViewContainer } from "../../components/ScrollViewContainer";
+import defaultAvatar from "../../assets/images/default-avatar.png";
 
 const data = new Array(22).fill({
   title: "User",
@@ -41,23 +50,23 @@ function Home(): JSX.Element {
     });
   }, [navigation, visible]);
 
-  const renderItem = ({ item, index }) => (
-    <ListItem
-      title={`${item.title} ${index + 1}`}
-      description={`user${index + 1}@mail.com`}
-      accessoryRight={<Icon name="chevron-right" />}
-      onPress={() => navigation.navigate("ShowUser")}
-    />
-  );
-
   return (
-    <>
-      <S.ListContainer data={data} renderItem={renderItem} />
+    <ScrollViewContainer>
+      {data.map((item, index) => (
+        <Card onPress={() => navigation.navigate("ShowUser")}>
+          <Image
+            source={defaultAvatar}
+            style={{ width: "100%", height: 200, resizeMode: "contain" }}
+          />
+          <Text category="h6">{`${item.title} ${index + 1}`}</Text>
+          <Text>{`user${index + 1}@mail.com`}</Text>
+        </Card>
+      ))}
       <S.PaginationContainer>
         <S.PreviousPageButton name="chevron-left" />
         <S.NextPageButton name="chevron-right" />
       </S.PaginationContainer>
-    </>
+    </ScrollViewContainer>
   );
 }
 
