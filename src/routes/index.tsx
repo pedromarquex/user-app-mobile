@@ -7,7 +7,7 @@ declare global {
       Home: undefined;
       NewUser: undefined;
       ShowUser: { userId: string };
-      EditUser: undefined;
+      EditUser: { userId: string };
     }
   }
 }

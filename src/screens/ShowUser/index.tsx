@@ -54,12 +54,12 @@ function ShowUser(): JSX.Element {
         >
           <MenuItem
             title="Editar Usuário"
-            onPress={() => navigation.navigate("EditUser")}
+            onPress={() => navigation.navigate("EditUser", { userId })}
           />
         </OverflowMenu>
       ),
     });
-  }, [navigation, visible]);
+  }, [navigation, userId, visible]);
 
   return (
     <S.UserInfoContainer>
