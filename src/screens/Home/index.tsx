@@ -1,27 +1,47 @@
 import React from "react";
 import {
-  Card,
+  Button,
   Icon,
   MenuItem,
   OverflowMenu,
+  Spinner,
   Text,
 } from "@ui-kitten/components";
 import { useNavigation } from "@react-navigation/native";
-
 import { Image } from "react-native";
+
 import * as S from "./styles";
 import { ScrollViewContainer } from "../../components/ScrollViewContainer";
 import defaultAvatar from "../../assets/images/default-avatar.png";
+import { api } from "../../services/api";
+import { User } from "../../models/User";
 
-const data = new Array(22).fill({
-  title: "User",
-  description: "User description",
-});
+interface UsersListResponse {
+  total: number;
+  per_page: number;
+  page: number;
+  total_pages: number;
+  users: User[];
+}
 
 function Home(): JSX.Element {
   const navigation = useNavigation();
 
+  const [usersListing, setUsersListing] = React.useState<UsersListResponse>([]);
   const [visible, setVisible] = React.useState(false);
+  const [page, setPage] = React.useState(1);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    async function loadUsers() {
+      setLoading(true);
+      const response = await api.get(`/users?page=${page}`);
+      setUsersListing(response.data);
+      setPage(response.data.page);
+      setLoading(false);
+    }
+    loadUsers();
+  }, [page]);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -50,22 +70,75 @@ function Home(): JSX.Element {
     });
   }, [navigation, visible]);
 
+  const handleNextPage = React.useCallback(() => {
+    if (page < usersListing.total_pages) {
+      setPage(page + 1);
+    }
+  }, [page, usersListing.total_pages]);
+
+  const handlePreviousPage = React.useCallback(() => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  }, [page]);
+
   return (
     <ScrollViewContainer>
-      {data.map((item, index) => (
-        <Card onPress={() => navigation.navigate("ShowUser")}>
-          <Image
-            source={defaultAvatar}
-            style={{ width: "100%", height: 200, resizeMode: "contain" }}
-          />
-          <Text category="h6">{`${item.title} ${index + 1}`}</Text>
-          <Text>{`user${index + 1}@mail.com`}</Text>
-        </Card>
-      ))}
-      <S.PaginationContainer>
-        <S.PreviousPageButton name="chevron-left" />
-        <S.NextPageButton name="chevron-right" />
-      </S.PaginationContainer>
+      {loading ? (
+        <S.LoadingContainer>
+          <Spinner size="giant" />
+        </S.LoadingContainer>
+      ) : (
+        <>
+          <S.UsersContainer>
+            {usersListing.users?.map((user) => (
+              <S.UserCard
+                key={user.id}
+                onPress={() => navigation.navigate("ShowUser")}
+              >
+                {user.avatar ? (
+                  <Image
+                    source={{
+                      uri: user.avatar_url.replace("localhost", "10.0.2.2"),
+                    }}
+                    style={{
+                      width: "100%",
+                      height: 200,
+                      resizeMode: "cover",
+                    }}
+                  />
+                ) : (
+                  <Image
+                    source={defaultAvatar}
+                    style={{
+                      width: "100%",
+                      height: 200,
+                      resizeMode: "contain",
+                    }}
+                  />
+                )}
+                <Text category="h6">{`${user.first_name} ${user.last_name}`}</Text>
+                <Text>{user.email}</Text>
+                <Button
+                  onPress={() => navigation.navigate("ShowUser")}
+                  appearance="ghost"
+                  status="basic"
+                  accessoryRight={<S.UserDetailIcon name="chevron-right" />}
+                >
+                  Detalhes
+                </Button>
+              </S.UserCard>
+            ))}
+          </S.UsersContainer>
+          <S.PaginationContainer>
+            <S.PreviousPageButton
+              name="chevron-left"
+              onPress={handlePreviousPage}
+            />
+            <S.NextPageButton name="chevron-right" onPress={handleNextPage} />
+          </S.PaginationContainer>
+        </>
+      )}
     </ScrollViewContainer>
   );
 }
