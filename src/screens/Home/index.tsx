@@ -41,6 +41,7 @@ function Home(): JSX.Element {
       setPage(response.data.page);
       setLoading(false);
     });
+    console.log("atualizou");
   }, [page]);
 
   React.useEffect(() => {
@@ -75,7 +76,9 @@ function Home(): JSX.Element {
   }, [navigation, visible]);
 
   useFocusEffect(() => {
-    loadUsers();
+    api.get(`/users?page=${page}`).then((response) => {
+      setUsersListing(response.data);
+    });
   });
 
   const handleNextPage = React.useCallback(() => {
