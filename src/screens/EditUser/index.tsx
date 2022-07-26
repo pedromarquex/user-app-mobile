@@ -1,9 +1,10 @@
 import React from "react";
-import { Button, Icon } from "@ui-kitten/components";
+import { Icon } from "@ui-kitten/components";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { useHeaderHeight } from "@react-navigation/elements";
 
 import * as ImagePicker from "expo-image-picker";
-import { Alert } from "react-native";
+import { Alert, KeyboardAvoidingView } from "react-native";
 import * as S from "./styles";
 import { User } from "../../models/User";
 import { api } from "../../services/api";
@@ -18,12 +19,12 @@ function EditUser(): JSX.Element {
   const [photo, setPhoto] = React.useState(null);
   const { userId } = route.params as EditUserProps;
   const [user, setUser] = React.useState<User>({} as User);
-  const [loading, setLoading] = React.useState(true);
+  const headerHeight = useHeaderHeight();
+  const [emailError, setEmailError] = React.useState("");
 
   React.useEffect(() => {
     api.get(`/users/${userId}`).then((response) => {
       setUser(response.data);
-      setLoading(false);
       setPhoto(response.data.avatar_url);
     });
   }, [userId]);
@@ -68,8 +69,41 @@ function EditUser(): JSX.Element {
     }
   }
 
+  async function handleUpdateUser() {
+    const { first_name, last_name, email } = user;
+
+    if (!first_name || !last_name || !email) {
+      Alert.alert("Erro", "Preencha todos os campos", [{ text: "OK" }]);
+      return;
+    }
+
+    api
+      .put(`/users/${userId}`, { first_name, last_name, email })
+      .then(() => {
+        Alert.alert("Sucesso", "Usuário atualizado com sucesso!", [
+          { text: "OK", onPress: () => navigation.goBack() },
+        ]);
+      })
+      .catch((error) => {
+        if (
+          error.response &&
+          error.response.data.error.includes("duplicate key value")
+        ) {
+          setEmailError("Este email já está sendo utilizado");
+          Alert.alert("Erro", "Este email já está sendo utilizado", [
+            { text: "OK" },
+          ]);
+          return;
+        }
+        Alert.alert("Erro", "Erro ao atualizar usuário", [{ text: "OK" }]);
+      });
+  }
+
   return (
-    <>
+    <KeyboardAvoidingView
+      behavior="position"
+      keyboardVerticalOffset={headerHeight}
+    >
       <S.ImageContainer>
         {!photo ? (
           <S.CameraIcon
@@ -95,6 +129,7 @@ function EditUser(): JSX.Element {
           placeholder="Digite seu primeiro nome"
           accessoryLeft={<Icon name="person-outline" />}
         />
+
         <S.TextInput
           size="large"
           value={user.last_name}
@@ -105,24 +140,27 @@ function EditUser(): JSX.Element {
           placeholder="Digite seu último nome"
           accessoryLeft={<Icon name="person-outline" />}
         />
+
         <S.TextInput
+          status={emailError ? "danger" : "basic"}
           size="large"
           value={user.email}
           onChangeText={(text) => {
             setUser({ ...user, email: text });
           }}
+          caption={emailError}
           label="Email"
           placeholder="Digite seu melhor email"
           accessoryLeft={<Icon name="email-outline" />}
         />
-        <S.ConfirmButton>
+        <S.ConfirmButton onPress={handleUpdateUser}>
           Salvar
           {/* <View> */}
           {/*  <Spinner size="small" status="basic" /> */}
           {/* </View> */}
         </S.ConfirmButton>
       </S.FormContainer>
-    </>
+    </KeyboardAvoidingView>
   );
 }
 
