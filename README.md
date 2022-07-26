@@ -3,4 +3,4 @@
     - [x] criar avatar
 - [x] listar usuários paginados
 - [x] mostrar usuário
-- [ ] deletar usuário
+- [x] deletar usuário
