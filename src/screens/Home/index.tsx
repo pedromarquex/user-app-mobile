@@ -7,7 +7,7 @@ import {
   Spinner,
   Text,
 } from "@ui-kitten/components";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Image } from "react-native";
 
 import * as S from "./styles";
@@ -34,7 +34,7 @@ function Home(): JSX.Element {
   const [page, setPage] = React.useState(1);
   const [loading, setLoading] = React.useState(true);
 
-  React.useEffect(() => {
+  const loadUsers = React.useCallback(() => {
     setLoading(true);
     api.get(`/users?page=${page}`).then((response) => {
       setUsersListing(response.data);
@@ -42,6 +42,10 @@ function Home(): JSX.Element {
       setLoading(false);
     });
   }, [page]);
+
+  React.useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -69,6 +73,10 @@ function Home(): JSX.Element {
       ),
     });
   }, [navigation, visible]);
+
+  useFocusEffect(() => {
+    loadUsers();
+  });
 
   const handleNextPage = React.useCallback(() => {
     if (page < usersListing.total_pages) {
