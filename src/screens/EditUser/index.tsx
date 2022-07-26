@@ -147,6 +147,7 @@ function EditUser(): JSX.Element {
           value={user.email}
           onChangeText={(text) => {
             setUser({ ...user, email: text });
+            setEmailError("");
           }}
           caption={emailError}
           label="Email"
