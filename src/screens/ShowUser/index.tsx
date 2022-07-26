@@ -6,9 +6,12 @@ import {
   Spinner,
   Text,
 } from "@ui-kitten/components";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 
-import { Image } from "react-native";
 import * as S from "./styles";
 import { User } from "../../models/User";
 import { api } from "../../services/api";
@@ -27,12 +30,20 @@ function ShowUser(): JSX.Element {
   const [user, setUser] = React.useState<User>({} as User);
   const [loading, setLoading] = React.useState(true);
 
-  React.useEffect(() => {
+  const loadUser = React.useCallback(() => {
     api.get(`/users/${userId}`).then((response) => {
       setUser(response.data);
       setLoading(false);
     });
   }, [userId]);
+
+  React.useEffect(() => {
+    loadUser();
+  }, [loadUser]);
+
+  useFocusEffect(() => {
+    loadUser();
+  });
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
