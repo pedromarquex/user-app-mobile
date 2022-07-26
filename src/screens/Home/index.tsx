@@ -41,7 +41,6 @@ function Home(): JSX.Element {
       setPage(response.data.page);
       setLoading(false);
     });
-    console.log("atualizou");
   }, [page]);
 
   React.useEffect(() => {
