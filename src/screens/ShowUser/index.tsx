@@ -12,6 +12,7 @@ import {
   useRoute,
 } from "@react-navigation/native";
 
+import { Alert } from "react-native";
 import * as S from "./styles";
 import { User } from "../../models/User";
 import { api } from "../../services/api";
@@ -45,6 +46,24 @@ function ShowUser(): JSX.Element {
     loadUser();
   });
 
+  const handleDeleteUser = React.useCallback(() => {
+    Alert.alert("Excluir usuário", "Deseja realmente excluir este usuário?", [
+      {
+        text: "Sim",
+        onPress: () => {
+          api.delete(`/users/${userId}`).then(() => {
+            navigation.goBack();
+            Alert.alert("Sucesso", "Usuário excluído com sucesso!");
+          });
+        },
+      },
+      {
+        text: "Cancelar",
+        style: "cancel",
+      },
+    ]);
+  }, [navigation, userId]);
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "Visualizar Usuário",
@@ -67,6 +86,7 @@ function ShowUser(): JSX.Element {
             title="Editar Usuário"
             onPress={() => navigation.navigate("EditUser", { userId })}
           />
+          <MenuItem title="Apagar Usuário" onPress={handleDeleteUser} />
         </OverflowMenu>
       ),
     });
