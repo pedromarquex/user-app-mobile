@@ -1,6 +1,6 @@
-- [ ] criar usuário
-- [ ] atualizar usuário
-    - [ ] criar avatar
-- [ ] listar usuários paginados
-- [ ] mostrar usuário
+- [x] criar usuário
+- [x] atualizar usuário
+    - [x] criar avatar
+- [x] listar usuários paginados
+- [x] mostrar usuário
 - [ ] deletar usuário
