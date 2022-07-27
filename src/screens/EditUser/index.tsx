@@ -117,7 +117,9 @@ function EditUser(): JSX.Element {
           />
         )}
       </S.ImageContainer>
-      <S.ConfirmButton onPress={handleImagePicker}>Nova Imagem</S.ConfirmButton>
+      <S.NewImageButton onPress={handleImagePicker}>
+        Nova Imagem
+      </S.NewImageButton>
       <S.FormContainer>
         <S.TextInput
           size="large"

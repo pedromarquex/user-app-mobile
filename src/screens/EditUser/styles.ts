@@ -15,6 +15,12 @@ export const ConfirmButton = styled(Button)`
   margin-top: 20px;
 `;
 
+export const NewImageButton = styled(Button)`
+  margin-top: 20px;
+  width: 90%;
+  align-self: center;
+`;
+
 export const ImageContainer = styled.View`
   margin-top: 20px;
   width: 90%;
