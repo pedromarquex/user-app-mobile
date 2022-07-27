@@ -36,6 +36,17 @@ To run this app, you need to have the following dependencies installed:
 
 ### ⚡️ Start
 
+Make sure you have the server running.
+The server code located at `https://github.com/pedromarquex/users-app-server`
+
+If you are using Android Studio emulator, you dont need to change the server url.
+But if you are using a real device, you need to change the server url to the one of your computer local IP.
+The server url is setting in the `src/services/api.ts` file.
+
+```ts
+const api = axios.create({ baseURL: "<SERVER_URL>:3333" });
+```
+
 To start application, run:
 
 ```
